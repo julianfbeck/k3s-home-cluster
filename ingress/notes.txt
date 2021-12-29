@@ -1,0 +1,7 @@
+- Cluster geht über https 
+- Certmanager mit traffic
+- traefik ist installiert als "deamon-set"
+- problem: Custom resources funktionierren nicht.
+- sind zwar konfiguriert aber die config fonktioniert nicth zu 100%
+- nicht gut
+

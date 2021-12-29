@@ -1,0 +1,6 @@
+bin/
+.env
+.idea/
+.terraform/
+tfplan
+output.yaml
