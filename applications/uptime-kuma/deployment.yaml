@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-kuma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: uptime-kuma
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: "/metrics"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3001"
+      creationTimestamp: null
+      labels:
+        name: uptime-kuma
+    spec:
+      containers:
+        - image: louislam/uptime-kuma
+          name: uptime-kuma
+          env:
+            - name: UPTIME_KUMA_PORT
+              value: "3001"
+            - name: PORT
+              value: "3001"
+          ports:
+            - containerPort: 3001
+          resources: {}
+          volumeMounts:
+            - mountPath: /app/data
+              name: uptime-kuma-claim0
+
+      restartPolicy: Always
+      volumes:
+        - name: uptime-kuma-claim0
+          persistentVolumeClaim:
+            claimName: uptime-kuma-claim0
+status: {}
