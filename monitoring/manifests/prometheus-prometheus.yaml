@@ -9,22 +9,22 @@ spec:
   affinity:
     podAntiAffinity:
       preferredDuringSchedulingIgnoredDuringExecution:
-      - podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-            - key: prometheus
-              operator: In
-              values:
-              - k8s
-          namespaces:
-          - monitoring
-          topologyKey: kubernetes.io/hostname
-        weight: 100
+        - podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: prometheus
+                  operator: In
+                  values:
+                    - k8s
+            namespaces:
+              - monitoring
+            topologyKey: kubernetes.io/hostname
+          weight: 100
   alerting:
     alertmanagers:
-    - name: alertmanager-main
-      namespace: monitoring
-      port: web
+      - name: alertmanager-main
+        namespace: monitoring
+        port: web
   externalUrl: http://prometheus.192.168.178.94.nip.io
   image: prom/prometheus:v2.19.1
   nodeSelector:
@@ -50,3 +50,6 @@ spec:
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
   version: v2.19.1
+  additionalScrapeConfigs:
+    key: kubernetes-pods.yaml
+    name: custom-scrape.yaml

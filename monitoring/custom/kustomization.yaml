@@ -4,6 +4,6 @@ namespace: monitoring
 secretGenerator:
   - name: additional-scrape-configs
     files:
-      - kubernetes-pods.yaml
+      - custom-scrape.yaml
 generatorOptions:
   disableNameSuffixHash: true
