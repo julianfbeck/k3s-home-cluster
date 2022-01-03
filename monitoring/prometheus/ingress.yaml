@@ -6,24 +6,23 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
-    #traefik.ingress.kubernetes.io/router.middlewares: kube-system-basic-auth-middleware@kubernetescrd
-  name: uptime-kuma
+  name: prometheus-k8s
   namespace: monitoring
 spec:
   rules:
-    - host: uptime.home.juli.sh
+    - host: prometheus.home.juli.sh
       http:
         paths:
           - backend:
               service:
-                name: uptime-kuma
+                name: prometheus-k8s
                 port:
-                  number: 3001 #8080
+                  number: 9090
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - uptime.home.juli.sh
-      secretName: uptime-tls
+        - prometheus.home.juli.sh
+      secretName: prometheus-tls
 status:
   loadBalancer: {}

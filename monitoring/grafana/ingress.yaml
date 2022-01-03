@@ -6,24 +6,23 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
-    #traefik.ingress.kubernetes.io/router.middlewares: kube-system-basic-auth-middleware@kubernetescrd
-  name: uptime-kuma
+  name: grafana
   namespace: monitoring
 spec:
   rules:
-    - host: uptime.home.juli.sh
+    - host: grafana.home.juli.sh
       http:
         paths:
           - backend:
               service:
-                name: uptime-kuma
+                name: grafana
                 port:
-                  number: 3001 #8080
+                  number: 3000
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - uptime.home.juli.sh
-      secretName: uptime-tls
+        - grafana.home.juli.sh
+      secretName: grafana-tls
 status:
   loadBalancer: {}
