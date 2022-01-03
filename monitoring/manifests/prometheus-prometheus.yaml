@@ -51,5 +51,5 @@ spec:
   serviceMonitorSelector: {}
   version: v2.19.1
   additionalScrapeConfigs:
-    key: kubernetes-pods.yaml
-    name: custom-scrape.yaml
+    key: custom-scrape.yaml
+    name: additional-scrape-configs
