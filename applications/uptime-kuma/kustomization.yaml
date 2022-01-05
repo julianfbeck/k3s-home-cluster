@@ -5,7 +5,8 @@ namespace: monitoring
 
 
 resources:
-  - deployment.yaml
+ # - deployment.yaml
+  - statefulset.yaml
   - service.yaml
-  - pvc.yaml
+  #- pvc.yaml
 

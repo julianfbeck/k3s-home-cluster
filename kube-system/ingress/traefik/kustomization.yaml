@@ -9,7 +9,3 @@ resources:
   - rbac
   - pod-monitor.yaml
 
-secretGenerator:
-  - name: db-user-pass
-    files:
-      - prometheus.yaml.txt

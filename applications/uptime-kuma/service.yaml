@@ -1,15 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-  creationTimestamp: null
-  name: uptime-kuma
+  name: uptime-kuma-service
 spec:
-  ports:
-    - name: "3001"
-      port: 3001
-      targetPort: 3001
   selector:
-    name: uptime-kuma
-status:
-  loadBalancer: {}
+    app: uptime-kuma
+  ports:
+  - name: uptime-kuma
+    port: 3001
+  clusterIP: None
