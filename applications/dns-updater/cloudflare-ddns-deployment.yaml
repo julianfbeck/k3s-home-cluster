@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  creationTimestamp: null
+  labels:
+  name: cloudflare-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cloudflare-ddns
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        name: cloudflare-ddns
+    spec:
+      containers:
+        - env:
+            - name: PROXIED
+              value: "false"
+            - name: SUBDOMAIN
+              value: "*.home"
+            - name: ZONE
+              value: juli.sh
+            - name: CRON
+              value: "*/1 * * * *"
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: API_KEY
+                  name: cloudflare-secret
+          image: oznu/cloudflare-ddns:latest
+          name: cloudflare-ddns
+          resources: {}
+      restartPolicy: Always
+status: {}
