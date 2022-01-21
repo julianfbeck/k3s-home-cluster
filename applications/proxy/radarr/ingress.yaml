@@ -6,23 +6,23 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
-    #traefik.ingress.kubernetes.io/router.middlewares: kube-system-basic-auth-middleware@kubernetescrd
-  name: homer-ingress
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-basic-auth-middleware@kubernetescrd
+  name: radarr-ingress
 spec:
   rules:
-    - host: homer.home.juli.sh
+    - host: radarr.home.juli.sh
       http:
         paths:
           - backend:
               service:
-                name: external-ip
+                name: radarr-proxy
                 port:
                   number: 80
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - homer.home.juli.sh
-      secretName: homer-tls
+        - radarr.home.juli.sh
+      secretName: radarr-tls
 status:
   loadBalancer: {}

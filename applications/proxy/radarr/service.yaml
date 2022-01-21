@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr-proxy
+spec:
+  ports:
+  - name: app
+    port: 80
+    protocol: TCP
+    targetPort: 8220
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: radarr-proxy
+subsets:
+- addresses:
+  - ip: 192.168.178.47
+  ports:
+  - name: app
+    port: 8220
+    protocol: TCP
