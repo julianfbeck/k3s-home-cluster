@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: applications
+
+resources:
+  - pi-stock-deployment.yaml
+  - pi-stock-service.yaml
+  - pi-stock-ingress.yaml
+
+secretGenerator:
+  - name: pi-stock-secret
+    envs:
+      - secrets/pi-stock

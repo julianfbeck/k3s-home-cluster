@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pi-stock
+  labels:
+    app: pi-stock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pi-stock
+  template:
+    metadata:
+      labels:
+        app: pi-stock
+    spec:
+      containers:
+        - image: kickbeak/pi-stock-de:latest
+          name: pi-stock
+          imagePullPolicy: Always
+          ports:
+            - name: pi-stock
+              containerPort: 3001
+              protocol: TCP
+          resources: {}
+          envFrom:
+            - secretRef:
+                name: pi-stock-secret
+
+      restartPolicy: Always
+status: {}
