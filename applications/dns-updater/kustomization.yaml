@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - cloudflare-ddns-deployment.yaml
+  - pi-stock-ddns-deployment.yaml
 
 secretGenerator:
   - name: cloudflare-secret

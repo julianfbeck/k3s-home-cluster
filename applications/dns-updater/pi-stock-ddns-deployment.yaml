@@ -4,24 +4,24 @@ metadata:
   annotations:
   creationTimestamp: null
   labels:
-  name: cloudflare-ddns
+  name: pi-stock-ddns-update
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: cloudflare-ddns
+      name: pi-stock-ddns-update
   strategy: {}
   template:
     metadata:
       labels:
-        name: cloudflare-ddns
+        name: pi-stock-ddns-update
     spec:
       containers:
         - env:
             - name: PROXIED
               value: "false"
             - name: SUBDOMAIN
-              value: "*.home"
+              value: "pi"
             - name: ZONE
               value: juli.sh
             - name: CRON
@@ -32,7 +32,7 @@ spec:
                   key: API_KEY
                   name: cloudflare-secret
           image: oznu/cloudflare-ddns:latest
-          name: cloudflare-ddns
+          name: pi-stock-ddns-update
           resources: {}
       restartPolicy: Always
 status: {}
