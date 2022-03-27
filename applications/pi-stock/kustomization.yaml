@@ -6,6 +6,7 @@ resources:
   - pi-stock-deployment.yaml
   - pi-stock-service.yaml
   - pi-stock-ingress.yaml
+  - pi-stock-monitor.yaml
 
 secretGenerator:
   - name: pi-stock-secret

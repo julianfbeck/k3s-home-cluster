@@ -1,7 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pi-stock-service
+  name: pi-stock
+  labels:
+    app: pi-stock
 spec:
   selector:
     app: pi-stock

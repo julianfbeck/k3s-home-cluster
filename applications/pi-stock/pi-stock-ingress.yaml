@@ -6,7 +6,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
-  name: pi-stock-ingress
+  name: pi-stock
 spec:
   rules:
     - host: pi.juli.sh
@@ -14,7 +14,7 @@ spec:
         paths:
           - backend:
               service:
-                name: pi-stock-service
+                name: pi-stock
                 port:
                   number: 3001
             path: /

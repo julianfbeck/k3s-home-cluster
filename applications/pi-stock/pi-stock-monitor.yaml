@@ -5,7 +5,6 @@ metadata:
 spec:
   selector:
     matchLabels:
-      name: pi-stock-service
+      app: pi-stock
   endpoints:
     - port: pi-stock
-      path: /metrics
