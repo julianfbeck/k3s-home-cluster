@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pi-stock-service-monitor
+spec:
+  selector:
+    matchLabels:
+      name: pi-stock-service
+  endpoints:
+    - port: pi-stock
+      path: /metrics

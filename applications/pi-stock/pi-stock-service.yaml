@@ -6,7 +6,7 @@ spec:
   selector:
     app: pi-stock
   ports:
-  - name: pi-stock
-    port: 3001
-    targetPort: pi-stock
+    - name: pi-stock
+      port: 3001
+      targetPort: pi-stock
   clusterIP: None

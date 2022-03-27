@@ -26,6 +26,5 @@ spec:
           envFrom:
             - secretRef:
                 name: pi-stock-secret
-
       restartPolicy: Always
 status: {}
