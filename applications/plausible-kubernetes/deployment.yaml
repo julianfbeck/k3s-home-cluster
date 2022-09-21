@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: plausible
-  namespace: default
 spec:
   selector:
     matchLabels:
@@ -15,7 +14,7 @@ spec:
     spec:
       containers:
         - name: plausible
-          image: plausible/analytics:latest
+          image: ghcr.io/fzr-forks/plausible:master
           command: ["/bin/sh"]
           args:
             [
@@ -30,12 +29,12 @@ spec:
               memory: "64Mi"
               cpu: "100m"
           livenessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 100
             httpGet:
               path: /
               port: 8000
           readinessProbe:
-            initialDelaySeconds: 10
+            initialDelaySeconds: 100
             httpGet:
               path: /
               port: 8000

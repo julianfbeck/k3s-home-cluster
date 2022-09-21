@@ -3,21 +3,19 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: clickhouse-pvc
-  namespace: databases
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-path
+  storageClassName: nfs-client 
   resources:
     requests:
-      storage: 1Gi
+      storage: 3Gi
 
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: clickhouse-config
-  namespace: databases
 data:
   config.xml: |
     <?xml version="1.0"?>
@@ -239,7 +237,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: clickhouse-statefulset
-  namespace: databases
   labels:
     app: clickhouse
 spec:
@@ -255,7 +252,7 @@ spec:
     spec:
       containers:
         - name: clickhouse
-          image: yandex/clickhouse-server
+          image: clickhouse/clickhouse-server:22.6-alpine
 
           ports:
             - containerPort: 9000
@@ -287,7 +284,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: clickhouse-service
-  namespace: databases
   labels:
     app: clickhouse
 spec:
