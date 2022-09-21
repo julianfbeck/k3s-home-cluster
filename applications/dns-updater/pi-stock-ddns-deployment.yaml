@@ -19,7 +19,7 @@ spec:
       containers:
         - env:
             - name: PROXIED
-              value: "false"
+              value: "true"
             - name: SUBDOMAIN
               value: "pi"
             - name: ZONE
