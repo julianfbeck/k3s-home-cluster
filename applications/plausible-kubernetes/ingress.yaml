@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: plausible
   annotations:
-    cert-manager.io/issuer: letsencrypt-prod
+    cert-manager.io/issuer: cloudflare
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -22,4 +22,4 @@ spec:
   tls:
     - hosts:
         - analytics.home.juli.sh
-      secretName: plausible-analytics-ingress-cert
+      secretName: plausible-analytics-cert
