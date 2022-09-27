@@ -6,5 +6,5 @@ spec:
   selector:
     app: plausible
   ports:
-    - port: 8000
+    - port: 80
       targetPort: 8000

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: plausible
-          image: ghcr.io/fzr-forks/plausible:master
+          image: kickbeak/plausible:arm
           command: ["/bin/sh"]
           args:
             [

@@ -1,25 +1,28 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: plausible
   annotations:
-    cert-manager.io/issuer: cloudflare
+    cert-manager.io/cluster-issuer: cloudflare
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
+  name: plausible
 spec:
   rules:
-    - host: analytics.home.juli.sh # your custom dns address (e.g. plausible.example.com)
+    - host: hello.home.juli.sh
       http:
         paths:
           - backend:
               service:
                 name: plausible
                 port:
-                  number: 8000
+                  number: 80
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - analytics.home.juli.sh
-      secretName: plausible-analytics-cert
+        - hello.home.juli.sh
+      secretName: plausible-tls
+status:
+  loadBalancer: {}
+
