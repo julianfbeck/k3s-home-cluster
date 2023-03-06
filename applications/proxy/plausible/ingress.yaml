@@ -6,22 +6,22 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
-  name: sonarr-ingress
+  name: plausible-proxy-ingress
 spec:
   rules:
-    - host: sonarr.home.juli.sh
+    - host: plausible.home.juli.sh
       http:
         paths:
           - backend:
               service:
-                name: sonarr-proxy
+                name: plausible-poxy
                 port:
                   number: 80
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - sonarr.home.juli.sh
-      secretName: sonarr-tls
+        - plausible.home.juli.sh
+      secretName: plausible-proxy-tls
 status:
   loadBalancer: {}

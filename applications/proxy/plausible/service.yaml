@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: plausible-poxy
+spec:
+  ports:
+  - name: app
+    port: 80
+    protocol: TCP
+    targetPort: 8228
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: plausible-poxy
+subsets:
+- addresses:
+  - ip: 192.168.178.47
+  ports:
+  - name: app
+    port: 8228
+    protocol: TCP
