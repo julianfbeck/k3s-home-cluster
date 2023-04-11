@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podsync
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: podsync
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: podsync
+    spec:
+      containers:
+        - image: tdeutsch/podsync:latest
+          name: podsync
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /app/data/
+              name: podsync-data
+            - mountPath: /app/config.toml
+              subPath: config.toml
+              name: podsync-config
+      restartPolicy: Always
+      volumes:
+        - name: podsync-data
+          persistentVolumeClaim:
+            claimName: podsync-data
+        - name: podsync-config
+          configMap:
+            name: podsync-config
+
+status: {}
