@@ -5,3 +5,4 @@ namespace: proxy
 resources:
   - ingress.yaml
   - service.yaml
+  - ingress-stats.yaml

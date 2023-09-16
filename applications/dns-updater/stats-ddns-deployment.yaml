@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats-ddns-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: stats-ddns-deployment
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        name: stats-ddns-deployment
+    spec:
+      containers:
+        - env:
+            - name: PROXIED
+              value: "true"
+            - name: SUBDOMAIN
+              value: "stats"
+            - name: ZONE
+              value: juli.sh
+            - name: CRON
+              value: "*/8 * * * *"
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: API_KEY
+                  name: cloudflare-secret
+          image: oznu/cloudflare-ddns:latest
+          name: stats-ddns-deployment
+          resources: {}
+      restartPolicy: Always
+status: {}

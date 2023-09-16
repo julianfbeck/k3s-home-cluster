@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: https
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  name: plausible-stats-proxy-ingress
+spec:
+  rules:
+    - host: stats.juli.sh
+      http:
+        paths:
+          - backend:
+              service:
+                name: plausible-poxy
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - stats.juli.sh
+      secretName: statsjulish
+status:
+  loadBalancer: {}
