@@ -3,10 +3,6 @@ kind: Kustomization
 namespace: proxy
 
 resources:
-  - dashboard
-  - radarr
-  - sonarr
-  - paperless
-  - plausible
-  - plane
-  - posthog
+  # - ingressroute.yaml
+  - ingress.yaml
+  - service.yaml

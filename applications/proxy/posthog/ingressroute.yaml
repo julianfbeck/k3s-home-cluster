@@ -1,0 +1,50 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: posthog-http-redirect
+  namespace: your-namespace
+spec:
+  entryPoints:
+    - web # for HTTP (port 80)
+  routes:
+  - match: Host(`posthog.home.juli.sh`)
+    kind: Rule
+    services:
+    - name: caddy-external-http
+      port: 80
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: posthog-https-redirect
+  namespace: your-namespace
+spec:
+  entryPoints:
+    - websecure # for HTTPS (port 443)
+  routes:
+  - match: Host(`posthog.home.juli.sh`)
+    kind: Rule
+    services:
+    - name: caddy-external-https
+      port: 443
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caddy-external-http
+  namespace: your-namespace
+spec:
+  type: ExternalName
+  externalName: 192.168.178.159
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: caddy-external-https
+  namespace: your-namespace
+spec:
+  type: ExternalName
+  externalName: 192.168.178.159
