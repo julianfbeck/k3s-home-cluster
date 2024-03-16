@@ -6,23 +6,22 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
     traefik.ingress.kubernetes.io/router.tls: "true"
-    # traefik.ingress.kubernetes.io/router.middlewares: kube-system-basic-auth-middleware@kubernetescrd
-  name: paperless-ingress
+  name: overseerr-ingress
 spec:
   rules:
-    - host: paperless.home.juli.sh
+    - host: overseerr.home.juli.sh
       http:
         paths:
           - backend:
               service:
-                name: paperless-proxy
+                name: overseerr-proxy
                 port:
                   number: 80
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - paperless.home.juli.sh
-      secretName: paperless-tls
+        - overseerr.home.juli.sh
+      secretName: overseerr-tls
 status:
   loadBalancer: {}

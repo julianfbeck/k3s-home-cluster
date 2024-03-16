@@ -10,3 +10,4 @@ resources:
   - plausible
   - plane
   - posthog
+  - overseer
