@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imageproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: imageproxy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: imageproxy
+    spec:
+      containers:
+        - image: brunom63/imgproxy-arm64:latest
+          name: imageproxy
+          ports:
+            - containerPort: 8080
+          resources: {}
+          env:
+            - name: IMGPROXY_BIND
+              value: ":8080"
+          # Removed volumeMounts section
+      restartPolicy: Always
+      # Removed volumes section
+status: {}
