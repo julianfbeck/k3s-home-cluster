@@ -11,3 +11,4 @@ resources:
   - plane
   - posthog
   - overseer
+  - mealie
