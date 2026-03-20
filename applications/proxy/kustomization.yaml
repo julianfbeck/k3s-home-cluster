@@ -4,6 +4,7 @@ namespace: proxy
 
 resources:
   - dashboard
+  - img
   - radarr
   - sonarr
   - paperless
