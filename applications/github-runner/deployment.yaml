@@ -51,7 +51,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: 2000m
-              memory: 1500Mi
+              memory: 3Gi
           volumeMounts:
             - name: state
               mountPath: /runner
