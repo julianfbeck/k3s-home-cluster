@@ -26,6 +26,7 @@ namespace; Plans must live there too.
 
 ## NFS
 
-The `nfs-client` storage class is backed by `192.168.178.49:/volume1/CloudNativeCluster`.
-When that NAS is unreachable, podsync / uptime-kuma / the NFS provisioner pod
-all stay stuck in ContainerCreating with a FailedMount event.
+The `nfs-csi` storage class is backed by TrueNAS at `192.168.178.77:/mnt/Ohara/k8s`
+via `csi-driver-nfs` (manifests under `kube-system/csi-driver-nfs/`). NFSv3 because
+NFSv4 isn't enabled on TrueNAS; flip both ends (Services → NFS → Enabled Protocols,
+and `nfsvers=` in the storage class) to move to v4.1.
