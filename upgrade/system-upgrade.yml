@@ -1,48 +1,44 @@
-# Create custom namespace for upgrade controller
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: k3s-upgrades
 ---
-# Server (Control Plane) upgrade plan
+# Server (control plane) upgrade plan.
+# `spec.version` is what the controller compares; bumping it triggers a fresh upgrade run.
 apiVersion: upgrade.cattle.io/v1
 kind: Plan
 metadata:
   name: server-plan
-  namespace: k3s-upgrades
+  namespace: system-upgrade
 spec:
   concurrency: 1
   cordon: true
   nodeSelector:
     matchExpressions:
-    - key: node-role.kubernetes.io/control-plane
-      operator: In
-      values:
-      - "true"
+      - key: node-role.kubernetes.io/control-plane
+        operator: In
+        values:
+          - "true"
   serviceAccountName: system-upgrade
   upgrade:
     image: rancher/k3s-upgrade
-    version: v1.22.17+k3s1
+  version: v1.35.4+k3s1
 ---
-# Agent (Worker) upgrade plan
+# Agent (worker) upgrade plan. Runs after server-plan completes via the `prepare` step.
 apiVersion: upgrade.cattle.io/v1
 kind: Plan
 metadata:
   name: agent-plan
-  namespace: k3s-upgrades
+  namespace: system-upgrade
 spec:
   concurrency: 1
   cordon: true
   nodeSelector:
     matchExpressions:
-    - key: node-role.kubernetes.io/control-plane
-      operator: DoesNotExist
+      - key: node-role.kubernetes.io/control-plane
+        operator: DoesNotExist
   prepare:
     args:
-    - prepare
-    - server-plan
+      - prepare
+      - server-plan
     image: rancher/k3s-upgrade
   serviceAccountName: system-upgrade
   upgrade:
     image: rancher/k3s-upgrade
-    version: v1.22.17+k3s1
+  version: v1.35.4+k3s1
