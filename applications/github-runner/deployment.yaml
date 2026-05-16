@@ -18,47 +18,33 @@ spec:
         app: github-runner
     spec:
       restartPolicy: Always
-      # Make sure /runner exists with correct ownership for the unprivileged runner user (UID 1001).
-      initContainers:
-        - name: chown-runner-dir
-          image: busybox:1.36
-          command: ['sh', '-c', 'chown -R 1001:1001 /runner']
-          volumeMounts:
-            - { name: state, mountPath: /runner }
       containers:
         - name: runner
-          image: ghcr.io/actions/actions-runner:latest
+          image: myoung34/github-runner:latest
           imagePullPolicy: Always
-          command: ['bash', '-c']
-          args:
-            - |
-              set -euo pipefail
-              cd /runner
-              if [ ! -f .runner ]; then
-                echo "Registering runner k8s against https://github.com/${RUNNER_OWNER}"
-                cp -r /home/runner/. /runner/
-                ./config.sh --unattended --replace \
-                  --url "https://github.com/${RUNNER_OWNER}" \
-                  --token "${RUNNER_TOKEN}" \
-                  --name "${RUNNER_NAME}" \
-                  --labels "${RUNNER_LABELS}" \
-                  --work _work
-              else
-                echo "Runner already configured, starting"
-              fi
-              exec ./run.sh
           env:
             - name: RUNNER_NAME
               value: k8s
-            - name: RUNNER_OWNER
+            - name: RUNNER_SCOPE
+              value: org
+            - name: ORG_NAME
               value: Bejuforge
-            - name: RUNNER_LABELS
+            - name: LABELS
               value: k8s,arm64,linux
-            - name: RUNNER_TOKEN
+            - name: RUNNER_WORKDIR
+              value: /runner/_work
+            - name: EPHEMERAL
+              value: "false"
+            - name: DISABLE_AUTO_UPDATE
+              value: "true"
+            # ACCESS_TOKEN is a classic PAT with `admin:org`. The image mints
+            # short-lived registration tokens against the org on every start,
+            # so the runner re-registers cleanly across restarts.
+            - name: ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: github-runner-secrets
-                  key: RUNNER_TOKEN
+                  key: ACCESS_TOKEN
           resources:
             requests:
               cpu: 100m
