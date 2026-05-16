@@ -16,6 +16,12 @@ spec:
     metadata:
       labels:
         app: github-runner
+      annotations:
+        # Belt-and-braces: descheduler's policy already excludes the
+        # github-actions namespace, but this annotation tells the
+        # DefaultEvictor to skip this pod even if the policy changes.
+        # A running job would be killed mid-step if the pod is evicted.
+        descheduler.alpha.kubernetes.io/evict: "false"
     spec:
       restartPolicy: Always
       containers:

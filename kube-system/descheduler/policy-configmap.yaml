@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: descheduler-policy-configmap
+  namespace: kube-system
+data:
+  policy.yaml: |
+    apiVersion: "descheduler/v1alpha2"
+    kind: "DeschedulerPolicy"
+    profiles:
+      - name: balance-by-memory
+        pluginConfig:
+          - name: DefaultEvictor
+            args:
+              # Skip pods whose eviction would be unsafe by default.
+              evictLocalStoragePods: false
+              evictSystemCriticalPods: false
+              evictFailedBarePods: false
+              ignorePvcPods: false
+              # Only evict a pod if it would actually fit on another node.
+              nodeFit: true
+          - name: LowNodeUtilization
+            args:
+              # Below these utilization percentages a node is considered
+              # "underutilized" and will receive pods.
+              thresholds:
+                memory: 30
+                cpu: 30
+                pods: 30
+              # Above these percentages a node is "overutilized" and
+              # the descheduler will try to evict pods from it.
+              targetThresholds:
+                memory: 75
+                cpu: 80
+                pods: 80
+              # Don't act unless at least 1 node is overutilized.
+              numberOfNodes: 1
+              # Exclude namespaces whose workloads must not be moved.
+              # github-actions: a running self-hosted runner job would be
+              #                 killed mid-step if evicted.
+              # kube-system:    don't touch system pods.
+              evictableNamespaces:
+                exclude:
+                  - github-actions
+                  - kube-system
+        plugins:
+          balance:
+            enabled:
+              - LowNodeUtilization
