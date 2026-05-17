@@ -13,6 +13,12 @@ volumeBindingMode: Immediate
 allowVolumeExpansion: true
 mountOptions:
   - nfsvers=3
+  # NFSv3 needs rpc.statd for remote locking; the CSI driver container doesn't
+  # ship statd, so the first mount on a node always fails with
+  # `mount.nfs: rpc.statd is not running...` until kubelet retries. nolock
+  # tells the kernel to keep locks local — fine for our PVC pattern where each
+  # PV is owned by a single pod (RWO).
+  - nolock
   - hard
   - rsize=1048576
   - wsize=1048576
