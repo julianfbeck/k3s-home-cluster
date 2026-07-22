@@ -29,8 +29,11 @@ rules:
       - ingresses/status
     verbs:
       - update
+  # traefik v2.10+ watches both CRD groups; missing RBAC on either one
+  # stalls the whole kubernetescrd provider (no middlewares load at all).
   - apiGroups:
     - traefik.containo.us
+    - traefik.io
     resources:
       - ingressroutes
       - ingressroutetcps
