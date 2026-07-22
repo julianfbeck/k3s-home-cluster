@@ -7,6 +7,8 @@ resources:
   - img
   - radarr
   - sonarr
+  - lazylibrarian
+  - sabnzbd
   - paperless
   - plausible
   - plane

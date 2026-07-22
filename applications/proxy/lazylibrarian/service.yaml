@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lazylibrarian-proxy
+spec:
+  ports:
+    - name: app
+      port: 80
+      protocol: TCP
+      targetPort: 8226
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: lazylibrarian-proxy
+subsets:
+  - addresses:
+      - ip: 192.168.178.82
+    ports:
+      - name: app
+        port: 8226
+        protocol: TCP
