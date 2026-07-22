@@ -9,6 +9,8 @@ resources:
   - sonarr
   - lazylibrarian
   - sabnzbd
+  - bazarr
+  - audiobookshelf
   - paperless
   - plausible
   - plane
