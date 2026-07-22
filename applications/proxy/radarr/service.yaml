@@ -17,7 +17,7 @@ metadata:
   name: radarr-proxy
 subsets:
 - addresses:
-  - ip: 192.168.178.47
+  - ip: 192.168.178.82
   ports:
   - name: app
     port: 8220
