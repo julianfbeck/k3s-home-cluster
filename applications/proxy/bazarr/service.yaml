@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bazarr-proxy
+spec:
+  ports:
+    - name: app
+      port: 80
+      protocol: TCP
+      targetPort: 8228
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: bazarr-proxy
+subsets:
+  - addresses:
+      - ip: 192.168.178.82
+    ports:
+      - name: app
+        port: 8228
+        protocol: TCP
