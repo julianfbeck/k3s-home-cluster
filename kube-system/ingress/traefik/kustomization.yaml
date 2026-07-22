@@ -2,6 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  # traefik.io CRDs for traefik v2.11 (vendored from traefik/traefik
+  # docs/content/reference/dynamic-configuration, tag v2.11)
+  - crds-traefik-io.yaml
   - daemonset.yaml
   - service.yaml
   - ingress.yaml
