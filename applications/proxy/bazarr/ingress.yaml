@@ -6,7 +6,6 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: https
-    traefik.ingress.kubernetes.io/router.middlewares: kube-system-basic-auth-middleware@kubernetescrd
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   rules:
