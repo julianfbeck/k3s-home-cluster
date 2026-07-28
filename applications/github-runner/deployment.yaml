@@ -43,14 +43,29 @@ spec:
               value: "false"
             - name: DISABLE_AUTO_UPDATE
               value: "true"
-            # ACCESS_TOKEN is a classic PAT with `admin:org`. The image mints
-            # short-lived registration tokens against the org on every start,
-            # so the runner re-registers cleanly across restarts.
-            - name: ACCESS_TOKEN
+            # RUNNER_TOKEN is an org registration token, used directly.
+            #
+            # This replaced ACCESS_TOKEN, a classic PAT with `admin:org`, which
+            # had expired: the image was calling the GitHub API on every start to
+            # mint a registration token, getting 401, and dying — 10741 restarts
+            # by the time it was noticed.
+            #
+            # ACCESS_TOKEN must stay REMOVED, not merely unset alongside this: the
+            # entrypoint prefers it when present and would overwrite RUNNER_TOKEN
+            # with whatever it managed to mint.
+            #
+            # Caveat, and the reason the PAT was the better design: a registration
+            # token is single-use and expires in about an hour, and this runner
+            # deregisters itself on shutdown (`Caught EXIT - Deregistering
+            # runner`), so it needs to register again on every start. This will
+            # therefore run until the next pod restart and then fail. Restoring a
+            # valid `admin:org` PAT as ACCESS_TOKEN brings back the self-healing
+            # behaviour.
+            - name: RUNNER_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: github-runner-secrets
-                  key: ACCESS_TOKEN
+                  key: RUNNER_TOKEN
           resources:
             requests:
               cpu: 100m
