@@ -4,6 +4,7 @@ namespace: proxy
 
 resources:
   - dashboard
+  - hermes
   - img
   - radarr
   - sonarr

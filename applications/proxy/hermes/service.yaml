@@ -1,0 +1,31 @@
+# Hermes web dashboard, which runs on the mini rather than in the cluster.
+# Selectorless Service + hand-written Endpoints, same shape as botju-proxy.
+#
+# Port 9120, NOT 9119: 9119 is `hermes serve`, the headless backend the iOS app
+# talks to, and it deliberately disables the web UI ("web UI disabled — use
+# `hermes dashboard`"). The dashboard is a separate process on its own port,
+# kept alive by the ai.hermes.dashboard launchd job.
+apiVersion: v1
+kind: Service
+metadata:
+  name: hermes-proxy
+spec:
+  ports:
+  - name: app
+    port: 80
+    protocol: TCP
+    targetPort: 9120
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: hermes-proxy
+subsets:
+- addresses:
+  - ip: 192.168.178.47
+  ports:
+  - name: app
+    port: 9120
+    protocol: TCP

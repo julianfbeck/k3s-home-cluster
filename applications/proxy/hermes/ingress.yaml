@@ -1,0 +1,44 @@
+# hermes.home.juli.sh -> the Hermes dashboard on the mini.
+#
+# home.juli.sh resolves to the house's public address, so this is reachable from
+# the internet like the other entries here. What sits behind it is an agent that
+# can run shell commands on the mini and holds credentials for Notion, Google,
+# Telegram, the k3s cluster and the phone — so the login in front of it is the
+# only thing between the internet and all of that.
+#
+# Hermes enforces that itself: a non-loopback bind refuses to serve without an
+# auth provider, and HERMES_DASHBOARD_BASIC_AUTH_* supplies one. Do not remove
+# those env vars to "fix" a login problem.
+#
+# The password is no longer a literal on the mini: as of 2026-07-30 it resolves
+# from op://agents/HERMES_DASHBOARD_BASIC_AUTH_PASSWORD/credential at startup.
+# So the dashboard login now depends on the 1Password fetch succeeding — see
+# botju's docs/1password-migration-plan.md for what happens when it does not.
+#
+# Hermes' own docs recommend the Nous OAuth provider rather than a password for
+# internet-facing deployments (`hermes dashboard register`); worth revisiting.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: https
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  name: hermes-ingress
+spec:
+  rules:
+    - host: hermes.home.juli.sh
+      http:
+        paths:
+          - backend:
+              service:
+                name: hermes-proxy
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - hermes.home.juli.sh
+      secretName: hermes-tls
