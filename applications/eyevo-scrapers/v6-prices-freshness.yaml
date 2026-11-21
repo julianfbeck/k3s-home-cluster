@@ -1,7 +1,7 @@
-# Independent watchdog for the scheduled v6 price publish (it runs on the studiju Mac, workflow
-# "Eyevo v6: scheduled price data"). Reads the public manifest only; Telegram when a catalog's
-# prices day is not today's (UTC) by 11:00 Berlin, i.e. the 03:40 run did not publish (Mac off,
-# runner down, job refused). No credentials besides the Telegram bot.
+# Independent watchdog for the scheduled v6 price publish (launchd agent sh.eyevo.v6.daily-prices on
+# the Mac mini since 2026-11-21). Reads the public manifest only; Telegram when a catalog's
+# prices day is not today's (UTC) by 11:00 Berlin, i.e. the 03:40 run did not publish (mini off or
+# not logged in after a reboot, job refused). No credentials besides the Telegram bot.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -24,7 +24,7 @@ data:
     except Exception as e:
         problems.append(f"manifest not readable: {e}")
     if problems:
-        text = "Eyevo v6 prices not refreshed today: " + "; ".join(problems) + ". Check the 'Eyevo v6: scheduled price data' workflow on the studiju runners."
+        text = "Eyevo v6 prices not refreshed today: " + "; ".join(problems) + ". Check the v6 jobs on the Mac mini: make -C infrastrucutre status-v6-mini / logs-v6-mini (runbook docs/operations/k3s-scrapers.md)."
         print(text)
         token, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
         if token and chat:

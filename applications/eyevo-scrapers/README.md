@@ -7,7 +7,7 @@ Scrapers of the Eyevo app (repo VegaPunkLabs/pokemontcg) as containers from GHCR
 
 | Workload | What | State |
 |---|---|---|
-| CronJob `v6-prices-freshness` | 11:00 Berlin: Telegram if the v6 manifest's prices were not refreshed today | active |
+| CronJob `v6-prices-freshness` | 11:00 Berlin: Telegram if the v6 manifest's prices were not refreshed today (the v6 price jobs themselves run as launchd agents on the Mac mini, not here: they peak at about 3 GB) | active |
 | Deployment `poketrace` | Poketrace price daemon (from the Hetzner box) | replicas 0 until cutover |
 | CronJob `scrydex` | Scrydex importer, 00:30 UTC (from the Hetzner timer) | suspended until cutover |
 | CronJob `tcgplayer` | TCGplayer batch scraper, Berlin times, quiet hours 04–10 | suspended until cutover |
