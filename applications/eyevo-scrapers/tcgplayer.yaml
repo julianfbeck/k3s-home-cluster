@@ -1,0 +1,47 @@
+# TCGplayer batch price scraper (was: GitHub workflow tcgplayer-batch-scraper on the studiju
+# runners). Same wall times in Europe/Berlin; the image runs it under scripts/scraper-window.py,
+# which refuses and interrupts the 04:00–10:00 quiet hours. suspend: true until the cutover
+# (then: gh workflow disable tcgplayer-batch-scraper.yml).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: tcgplayer
+  namespace: eyevo-scrapers
+spec:
+  schedule: "15 0,10,14,18,22 * * *"
+  timeZone: Europe/Berlin
+  suspend: true
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 1800
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 10800
+      template:
+        spec:
+          restartPolicy: Never
+          imagePullSecrets:
+            - name: ghcr-pull
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values: ["node1", "worker2"]
+          containers:
+            - name: tcgplayer
+              image: ghcr.io/vegapunklabs/eyevo-tcgplayer:main
+              env:
+                - {name: LIMIT, value: "1000"}
+                - {name: RANGE, value: quarter}
+                - {name: DRY_RUN, value: "false"}
+              envFrom:
+                - secretRef:
+                    name: eyevo-tcgplayer
+              resources:
+                requests: {cpu: 100m, memory: 256Mi}
+                limits: {cpu: 1500m, memory: 1Gi}

@@ -1,0 +1,77 @@
+# Independent watchdog for the scheduled v6 price publish (it runs on the studiju Mac, workflow
+# "Eyevo v6: scheduled price data"). Reads the public manifest only; Telegram when a catalog's
+# prices day is not today's (UTC) by 11:00 Berlin, i.e. the 03:40 run did not publish (Mac off,
+# runner down, job refused). No credentials besides the Telegram bot.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: v6-prices-freshness
+  namespace: eyevo-scrapers
+data:
+  check.py: |
+    import datetime, json, os, sys, urllib.parse, urllib.request
+    URL = "https://data.eyevo.app/eyevo/v6/manifest.json"
+    req = urllib.request.Request(URL + "?ts=" + str(int(datetime.datetime.now().timestamp())), headers={"User-Agent": "eyevo-watchdog/1.0"})
+    problems = []
+    try:
+        m = json.load(urllib.request.urlopen(req, timeout=30))
+        today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+        days = {c: (v.get("prices") or {}).get("day") for c, v in m["catalogs"].items()}
+        for c, d in sorted(days.items()):
+            if not d or d < today:
+                problems.append(f"{c} prices day {d}")
+        print("prices days:", days, "today:", today)
+    except Exception as e:
+        problems.append(f"manifest not readable: {e}")
+    if problems:
+        text = "Eyevo v6 prices not refreshed today: " + "; ".join(problems) + ". Check the 'Eyevo v6: scheduled price data' workflow on the studiju runners."
+        print(text)
+        token, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
+        if token and chat:
+            data = urllib.parse.urlencode({"chat_id": chat, "text": text}).encode()
+            urllib.request.urlopen("https://api.telegram.org/bot" + token + "/sendMessage", data=data, timeout=20)
+        sys.exit(1)
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: v6-prices-freshness
+  namespace: eyevo-scrapers
+spec:
+  schedule: "0 11 * * *"
+  timeZone: Europe/Berlin
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 300
+      template:
+        spec:
+          restartPolicy: Never
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values: ["node1", "worker2"]
+          containers:
+            - name: check
+              image: python:3.13.1-alpine3.21
+              command: ["python3", "/check/check.py"]
+              envFrom:
+                - secretRef:
+                    name: eyevo-telegram
+              resources:
+                requests: {cpu: 10m, memory: 32Mi}
+                limits: {cpu: 200m, memory: 96Mi}
+              volumeMounts:
+                - name: check
+                  mountPath: /check
+          volumes:
+            - name: check
+              configMap:
+                name: v6-prices-freshness

@@ -1,0 +1,42 @@
+# Scrydex importer, scheduled refresh (was: eyevo-scrydex-importer.timer, daily 00:30 UTC, on the
+# Hetzner box; the importer itself decides whether a three-day refresh is due and resumes
+# interrupted runs from Mongo db scrydex). suspend: true until the cutover.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scrydex
+  namespace: eyevo-scrapers
+spec:
+  schedule: "30 0 * * *"
+  timeZone: Etc/UTC
+  suspend: true
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 3600
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 43200
+      template:
+        spec:
+          restartPolicy: Never
+          imagePullSecrets:
+            - name: ghcr-pull
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/hostname
+                        operator: In
+                        values: ["node1", "worker2"]
+          containers:
+            - name: scrydex
+              image: ghcr.io/vegapunklabs/eyevo-scrydex:main
+              envFrom:
+                - secretRef:
+                    name: eyevo-scrydex
+              resources:
+                requests: {cpu: 50m, memory: 192Mi}
+                limits: {cpu: 1000m, memory: 512Mi}

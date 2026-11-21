@@ -1,0 +1,41 @@
+# Poketrace price daemon (was: eyevo-poketrace-scraper.service on the Hetzner box).
+# replicas: 0 until the cutover in docs/operations/k3s-scrapers.md (VegaPunkLabs/pokemontcg):
+# the Hetzner unit must be stopped + disabled first; two daemons would spend the API budget twice.
+# State (cursors, budget, rate-limit notice) lives in Mongo db poketrace, so it resumes.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poketrace
+  namespace: eyevo-scrapers
+  labels: {app: poketrace}
+spec:
+  replicas: 0
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {app: poketrace}
+  template:
+    metadata:
+      labels: {app: poketrace}
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: ["node1", "worker2"]
+      containers:
+        - name: poketrace
+          image: ghcr.io/vegapunklabs/eyevo-poketrace:main
+          envFrom:
+            - secretRef:
+                name: eyevo-poketrace
+            - secretRef:
+                name: eyevo-telegram
+          resources:
+            requests: {cpu: 50m, memory: 192Mi}
+            limits: {cpu: 1000m, memory: 512Mi}

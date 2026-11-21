@@ -1,0 +1,53 @@
+# Deploy identity for the Eyevo scraper-images workflow (VegaPunkLabs/pokemontcg,
+# .github/workflows/scraper-images.yml). It may only read and update the workloads of this
+# namespace (set a new image, resume a CronJob); no secrets, no other namespaces.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eyevo-deployer
+  namespace: eyevo-scrapers
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: eyevo-deployer-token
+  namespace: eyevo-scrapers
+  annotations:
+    kubernetes.io/service-account.name: eyevo-deployer
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: eyevo-deployer
+  namespace: eyevo-scrapers
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    verbs: ["get", "list", "patch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch", "create"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eyevo-deployer
+  namespace: eyevo-scrapers
+subjects:
+  - kind: ServiceAccount
+    name: eyevo-deployer
+    namespace: eyevo-scrapers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: eyevo-deployer
